@@ -147,6 +147,49 @@ border-radius:6px;
 
 <div class="main">
 
+<div class="card">
+
+<h2>Cadastrar Usuário</h2>
+
+<form method="POST">
+
+<p>
+Nome:<br>
+<input type="text" name="nome" required>
+</p>
+
+<p>
+Email:<br>
+<input type="email" name="email" required>
+</p>
+
+<p>
+Perfil:<br>
+<select name="perfil">
+<option>Administrador</option>
+<option>Editor</option>
+<option>Usuário</option>
+</select>
+</p>
+
+<p>
+Status:<br>
+<select name="status">
+<option>Ativo</option>
+<option>Inativo</option>
+</select>
+</p>
+
+<br>
+
+<button type="submit" style="background:#16a34a;color:white;padding:8px 15px;">
+Cadastrar
+</button>
+
+</form>
+
+</div>
+
 <h1>Gestão de Usuários</h1>
 
 <?php if($usuarioSelecionado){ ?>
