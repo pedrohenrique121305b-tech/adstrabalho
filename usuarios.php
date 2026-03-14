@@ -1,37 +1,21 @@
 <?php
 session_start();
 
-/* CRIA LISTA DE USUÁRIOS SE NÃO EXISTIR */
+/* lista inicial de usuários */
 
-if(!isset($_SESSION["usuarios"])){
+if(!isset($_SESSION['usuarios'])){
 
-$_SESSION["usuarios"] = [
+$_SESSION['usuarios'] = [
 
-["id"=>1,"nome"=>"João","email"=>"joao@email.com","acesso"=>"Administrador","status"=>"Ativo"],
-["id"=>2,"nome"=>"Maria","email"=>"maria@email.com","acesso"=>"Usuário","status"=>"Ativo"],
-["id"=>3,"nome"=>"Carlos","email"=>"carlos@email.com","acesso"=>"Editor","status"=>"Inativo"]
+["id"=>1,"nome"=>"Ana Souza","email"=>"ana@email.com","perfil"=>"Administrador","status"=>"Ativo"],
+["id"=>2,"nome"=>"João Silva","email"=>"joao@email.com","perfil"=>"Editor","status"=>"Ativo"],
+["id"=>3,"nome"=>"Carlos Lima","email"=>"carlos@email.com","perfil"=>"Usuário","status"=>"Inativo"]
 
 ];
 
 }
 
-/* CADASTRAR USUÁRIO */
-
-if(isset($_POST["nome"])){
-
-$novo = [
-"id"=>count($_SESSION["usuarios"])+1,
-"nome"=>$_POST["nome"],
-"email"=>$_POST["email"],
-"acesso"=>$_POST["acesso"],
-"status"=>$_POST["status"]
-];
-
-$_SESSION["usuarios"][] = $novo;
-
-}
-
-/* EXCLUIR USUÁRIO */
+/* excluir usuário */
 
 if(isset($_GET["excluir"])){
 
@@ -40,16 +24,18 @@ $id = $_GET["excluir"];
 foreach($_SESSION["usuarios"] as $chave => $u){
 
 if($u["id"] == $id){
+
 unset($_SESSION["usuarios"][$chave]);
-}
 
 }
 
 }
 
-/* VISUALIZAR USUÁRIO */
+}
 
-$usuarioVisualizar = null;
+/* ver usuário */
+
+$usuarioSelecionado = null;
 
 if(isset($_GET["ver"])){
 
@@ -58,7 +44,9 @@ $id = $_GET["ver"];
 foreach($_SESSION["usuarios"] as $u){
 
 if($u["id"] == $id){
-$usuarioVisualizar = $u;
+
+$usuarioSelecionado = $u;
+
 }
 
 }
@@ -72,156 +60,106 @@ $usuarioVisualizar = $u;
 <head>
 
 <meta charset="UTF-8">
-<title>Gestão de Usuários</title>
+<title>Painel</title>
 
 <style>
 
 body{
+margin:0;
 font-family:Arial;
-background:#f0f0f0;
+display:flex;
+background:#f4f4f4;
 }
 
-h1{
-text-align:center;
-}
-
-/* FORMULÁRIO */
-
-form{
-width:60%;
-margin:auto;
-background:white;
-padding:20px;
-margin-bottom:20px;
-}
-
-input,select{
-width:100%;
-padding:8px;
-margin-top:5px;
-margin-bottom:10px;
-}
-
-.cadastrar{
-background:green;
+.sidebar{
+width:220px;
+background:#1f2937;
 color:white;
-padding:8px;
-border:none;
+height:100vh;
+padding:20px;
 }
 
-/* TABELA */
+.sidebar a{
+display:block;
+color:white;
+text-decoration:none;
+margin:10px 0;
+}
+
+.main{
+flex:1;
+padding:30px;
+}
 
 table{
-width:80%;
-margin:auto;
+width:100%;
 border-collapse:collapse;
 background:white;
 }
 
 th{
-background:#333;
+background:#111827;
 color:white;
 padding:10px;
 }
 
 td{
 padding:10px;
-text-align:center;
+border-bottom:1px solid #ddd;
 }
 
-tr:nth-child(even){
-background:#f2f2f2;
-}
-
-/* STATUS */
-
-.ativo{
-color:green;
-font-weight:bold;
-}
-
-.inativo{
-color:red;
-font-weight:bold;
-}
-
-/* BOTÕES */
-
-.btn{
+button{
 padding:5px 10px;
-color:white;
-text-decoration:none;
+border:none;
 }
 
-.visualizar{
-background:blue;
+.ver{
+background:#2563eb;
+color:white;
 }
 
 .excluir{
 background:red;
+color:white;
 }
 
-/* VISUALIZAÇÃO */
-
-.caixa{
-width:60%;
-margin:20px auto;
+.card{
 background:white;
-padding:15px;
-}
-
-/* RODAPÉ */
-
-footer{
-text-align:center;
-margin-top:30px;
+padding:20px;
+margin-bottom:20px;
+border-radius:6px;
 }
 
 </style>
 
 </head>
+
 <body>
+
+<div class="sidebar">
+
+<h2>Painel</h2>
+
+<a href="index.php">Dashboard</a>
+<a href="index.php">Usuários</a>
+
+</div>
+
+<div class="main">
 
 <h1>Gestão de Usuários</h1>
 
-<form method="POST">
+<?php if($usuarioSelecionado){ ?>
 
-<h3>Cadastrar Novo Usuário</h3>
+<div class="card">
 
-<label>Nome</label>
-<input type="text" name="nome" required>
+<h2>Detalhes do Usuário</h2>
 
-<label>Email</label>
-<input type="email" name="email" required>
-
-<label>Acesso</label>
-<select name="acesso">
-<option>Administrador</option>
-<option>Usuário</option>
-<option>Editor</option>
-</select>
-
-<label>Status</label>
-<select name="status">
-<option>Ativo</option>
-<option>Inativo</option>
-</select>
-
-<button class="cadastrar">Cadastrar</button>
-
-</form>
-
-<?php if($usuarioVisualizar){ ?>
-
-<div class="caixa">
-
-<h3>Visualização do Usuário</h3>
-
-<p><b>ID:</b> <?php echo $usuarioVisualizar["id"]; ?></p>
-<p><b>Nome:</b> <?php echo $usuarioVisualizar["nome"]; ?></p>
-<p><b>Email:</b> <?php echo $usuarioVisualizar["email"]; ?></p>
-<p><b>Acesso:</b> <?php echo $usuarioVisualizar["acesso"]; ?></p>
-<p><b>Status:</b> <?php echo $usuarioVisualizar["status"]; ?></p>
+<p><b>ID:</b> <?php echo $usuarioSelecionado["id"]; ?></p>
+<p><b>Nome:</b> <?php echo $usuarioSelecionado["nome"]; ?></p>
+<p><b>Email:</b> <?php echo $usuarioSelecionado["email"]; ?></p>
+<p><b>Perfil:</b> <?php echo $usuarioSelecionado["perfil"]; ?></p>
+<p><b>Status:</b> <?php echo $usuarioSelecionado["status"]; ?></p>
 
 </div>
 
@@ -233,46 +171,40 @@ margin-top:30px;
 <th>ID</th>
 <th>Nome</th>
 <th>Email</th>
-<th>Acesso</th>
+<th>Perfil</th>
 <th>Status</th>
 <th>Ações</th>
 </tr>
 
-<?php
+<?php foreach($_SESSION["usuarios"] as $u){ ?>
 
-foreach($_SESSION["usuarios"] as $u){
+<tr>
 
-$statusClasse = strtolower($u["status"]);
+<td><?php echo $u["id"]; ?></td>
+<td><?php echo $u["nome"]; ?></td>
+<td><?php echo $u["email"]; ?></td>
+<td><?php echo $u["perfil"]; ?></td>
+<td><?php echo $u["status"]; ?></td>
 
-echo "<tr>";
+<td>
 
-echo "<td>".$u["id"]."</td>";
-echo "<td>".$u["nome"]."</td>";
-echo "<td>".$u["email"]."</td>";
-echo "<td>".$u["acesso"]."</td>";
-echo "<td class='$statusClasse'>".$u["status"]."</td>";
+<a href="?ver=<?php echo $u["id"]; ?>">
+<button class="ver">Ver</button>
+</a>
 
-echo "<td>";
+<a href="?excluir=<?php echo $u["id"]; ?>">
+<button class="excluir">Excluir</button>
+</a>
 
-echo "<a class='btn visualizar' href='?ver=".$u["id"]."'>Ver</a> ";
+</td>
 
-echo "<a class='btn excluir' href='?excluir=".$u["id"]."'>Excluir</a>";
+</tr>
 
-echo "</td>";
-
-echo "</tr>";
-
-}
-
-?>
+<?php } ?>
 
 </table>
 
-<footer>
-
-<p>2026 - Desenvolvido por Pedro</p>
-
-</footer>
+</div>
 
 </body>
 </html>
